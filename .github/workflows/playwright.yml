@@ -1,0 +1,58 @@
+name: Playwright + Evinced accessibility tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # .npmrc reads the JFrog auth token from $EVINCED_JFROG_TOKEN - it is never
+      # written into any file in this repo. Set it once under
+      # Settings -> Secrets and variables -> Actions -> New repository secret.
+      - name: Install dependencies (incl. the private @evinced package)
+        run: npm install
+        env:
+          EVINCED_JFROG_TOKEN: ${{ secrets.EVINCED_JFROG_TOKEN }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # Same pattern: the SDK is authenticated in global-setup.js from these two
+      # env vars, sourced here from repo secrets rather than any committed file.
+      - name: Run Playwright + Evinced test suite
+        run: npx playwright test
+        env:
+          EVINCED_SERVICE_ID: ${{ secrets.EVINCED_SERVICE_ID }}
+          EVINCED_API_KEY: ${{ secrets.EVINCED_API_KEY }}
+
+      - name: Upload Playwright HTML report (screenshots, traces, video)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      # One report for the whole suite, built by global-teardown.js from what
+      # every test staged, whichever scanning mode it used.
+      - name: Upload Evinced accessibility report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evinced-report
+          path: evincedReports/
+          retention-days: 14

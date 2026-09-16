@@ -1,0 +1,7 @@
+{
+  "outputDir": "evincedReports",
+  "reportName": "aggregatedReport.html",
+  "reportFormat": "html",
+  "tempDir": "os.tmpdir()",
+  "overWriteExistReport": true
+}

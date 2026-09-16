@@ -1,0 +1,19 @@
+{
+  "name": "evinced-a11y-demo",
+  "version": "1.0.0",
+  "description": "Playwright test project demonstrating Evinced JS Playwright SDK integration against https://a11y-audits.com/",
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report",
+    "test:simple": "playwright test tests/simple-navigation.spec.js",
+    "test:complex": "playwright test tests/complex-flow.spec.js",
+    "test:scaled": "playwright test tests-scaled/"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@evinced/js-playwright-sdk": "^1.0.0"
+  },
+  "license": "UNLICENSED"
+}
